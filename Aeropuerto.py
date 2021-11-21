@@ -59,7 +59,7 @@ class Aeropuerto:
         for x in range(5):
             if(self.pista[x] == 6):
                 self.Total[x] += (self.T_MAX - self.ultima_ocupacion[x])
-            print("Tiempo total de la pista {} vacia es : {}".format(x+1,self.Total[x]))
+            print("Tiempo total de la pista {} vacia es : {} minutos".format(x+1,self.Total[x]))
                     
     def Despego(self,index):
         if self.Cola:
