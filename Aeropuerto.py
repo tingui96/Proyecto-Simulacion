@@ -20,20 +20,22 @@ class Aeropuerto:
         #2 carga , descarga , combustible
         #3 reparacion
         #6 vacio
+        self.Total = [0,0,0,0,0]
+        self.ultima_ocupacion = [0,0,0,0,0]
+        
         self.pista = [6,6,6,6,6]
         self.t = 0
-        self.T_MAX = 7*24
+        self.T_MAX = 24*7*60
         self.t_arribo = sys.maxsize
         self.Cola = 0
 
     def Simulacion(self):
-        self.t_arribo = self.t + gen_VA_exp(20)
+        self.t = self.t_arribo = self.t + gen_VA_exp(20)
         while(self.t<self.T_MAX):
-            self.t = min(self.t_arribo,min(self.t_pista))
             if(self.t==self.t_arribo):
                 print("Arribo un avion con tiempo "+ str(self.t))
                 self.Arribo()
-                
+                            
             elif(self.t == min(self.t_pista)):
                 index = self.t_pista.index(self.t)
                 action = self.pista[index]
@@ -52,6 +54,12 @@ class Aeropuerto:
                 elif action == 1:
                     print("Despego el avion de la pista "+ str(index) +" con tiempo "+ str(self.t))
                     self.Despego(index)
+            self.t = min(self.t_arribo,min(self.t_pista))
+                
+        for x in range(5):
+            if(self.pista[x] == 6):
+                self.Total[x] += (self.T_MAX - self.ultima_ocupacion[x])
+            print("Tiempo total de la pista {} vacia es : {}".format(x+1,self.Total[x]))
                     
     def Despego(self,index):
         if self.Cola:
@@ -62,6 +70,7 @@ class Aeropuerto:
         else:
             self.t_pista[index] = sys.maxsize
             self.pista[index] = 6
+            self.ultima_ocupacion[index] = self.t
             print("Pista " + str(index) + " libre")
 
     def Reparo(self,index):
@@ -100,6 +109,7 @@ class Aeropuerto:
             self.t_pista[index] = self.t + gen_VA_N(10,5)
             self.pista[index] = 0
             print("Va a aterrizar un avion el la pista "+ str(index))
+            self.Total[index] = self.Total[index] + self.t - self.ultima_ocupacion[index]
         except:
             self.Cola += 1
             print("Pistas llenas, "+ str(self.Cola) +" aviones en cola")
